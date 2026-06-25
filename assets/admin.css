@@ -27,11 +27,14 @@
 	align-items: baseline;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px 12px;
+	gap: 4px 10px;
 }
 
 .sm-page-title .page-title-action {
+	flex-basis: 100%;
 	margin-left: 0;
+	margin-top: 10px;
+	width: fit-content;
 }
 
 .sm-byline {
