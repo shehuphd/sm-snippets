@@ -92,26 +92,7 @@ final class Admin {
 
 		wp_enqueue_style( 'sm-snippets-admin', SM_SNIPPETS_URL . 'assets/admin.css', array(), SM_SNIPPETS_VERSION );
 
-		$settings = wp_enqueue_code_editor( array( 'type' => 'text/html' ) );
-		wp_enqueue_code_editor( array( 'type' => 'text/css' ) );
-		wp_enqueue_code_editor( array( 'type' => 'application/javascript' ) );
-		wp_enqueue_code_editor( array( 'type' => 'application/x-httpd-php' ) );
-		wp_enqueue_script( 'code-editor' );
-		wp_enqueue_style( 'code-editor' );
-		wp_enqueue_script( 'sm-snippets-admin', SM_SNIPPETS_URL . 'assets/admin.js', array( 'jquery', 'code-editor' ), SM_SNIPPETS_VERSION, true );
-		wp_localize_script(
-			'sm-snippets-admin',
-			'smSnippetsEditor',
-			array(
-				'settings' => $settings,
-				'modes'    => array(
-					'html' => 'htmlmixed',
-					'css'  => 'css',
-					'js'   => 'javascript',
-					'php'  => 'application/x-httpd-php',
-				),
-			)
-		);
+		wp_enqueue_script( 'sm-snippets-admin', SM_SNIPPETS_URL . 'assets/admin.js', array(), SM_SNIPPETS_VERSION, true );
 	}
 
 	public function safe_mode_notice(): void {

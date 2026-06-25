@@ -177,7 +177,7 @@
 	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 	font-size: 13px;
 	line-height: 1.55;
-	min-height: min(58vh, 640px);
+	min-height: 180px;
 	padding: 12px 14px;
 	resize: vertical;
 	tab-size: 2;
@@ -190,43 +190,6 @@
 	gap: 8px;
 	margin-bottom: 0;
 }
-
-.sm-primary-box .CodeMirror {
-	background: #fbfcff;
-	border: 1px solid #cfd5df;
-	border-radius: 7px;
-	box-shadow: 0 1px 1px rgba(18, 24, 40, 0.025);
-	box-sizing: border-box;
-	font-size: 13px;
-	line-height: 1.55;
-	min-height: min(58vh, 640px);
-	max-width: 100%;
-	width: 100%;
-}
-
-.sm-primary-box .CodeMirror-focused {
-	border-color: var(--sm-blue);
-	box-shadow: 0 0 0 2px rgba(56, 88, 233, 0.14);
-}
-
-.sm-primary-box .CodeMirror-gutters {
-	background: #f3f5f9;
-	border-color: #dfe3ea;
-	border-radius: 7px 0 0 7px;
-}
-
-.sm-primary-box .CodeMirror-scroll {
-	min-height: min(58vh, 640px);
-	overflow: auto !important;
-}
-
-.sm-primary-box .CodeMirror pre.CodeMirror-line,
-.sm-primary-box .CodeMirror pre.CodeMirror-line-like {
-	overflow-wrap: normal !important;
-	white-space: pre !important;
-	word-break: normal !important;
-}
-
 .sm-publish-box {
 	background: linear-gradient(180deg, #ffffff 0%, #f8f9ff 100%);
 }
