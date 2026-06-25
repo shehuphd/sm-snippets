@@ -29,7 +29,7 @@
 		settings.codemirror = Object.assign({}, settings.codemirror || {}, {
 			indentUnit: 2,
 			lineNumbers: true,
-			lineWrapping: true,
+			lineWrapping: false,
 			matchBrackets: true,
 			mode: getMode(typeSelect ? typeSelect.value : 'html')
 		});
@@ -40,7 +40,14 @@
 		if (typeSelect && editor && editor.codemirror) {
 			typeSelect.addEventListener('change', function () {
 				editor.codemirror.setOption('mode', getMode(typeSelect.value));
+				editor.codemirror.refresh();
 			});
+		}
+
+		if (editor && editor.codemirror) {
+			window.setTimeout(function () {
+				editor.codemirror.refresh();
+			}, 0);
 		}
 	}
 

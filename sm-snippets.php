@@ -2,7 +2,7 @@
 /**
  * Plugin Name: SM Snippets
  * Description: A local, boring-in-the-best-way snippet manager for WordPress.
- * Version: 0.1.4
+ * Version: 0.1.5
  * Update URI: false
  * Requires PHP: 7.4
  * Requires at least: 6.0
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SM_SNIPPETS_VERSION', '0.1.4' );
+define( 'SM_SNIPPETS_VERSION', '0.1.5' );
 define( 'SM_SNIPPETS_FILE', __FILE__ );
 define( 'SM_SNIPPETS_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SM_SNIPPETS_URL', plugin_dir_url( __FILE__ ) );
