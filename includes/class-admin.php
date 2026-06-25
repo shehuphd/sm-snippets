@@ -260,7 +260,6 @@ final class Admin {
 		echo '<label class="sm-switch"><input type="checkbox" name="active" value="1" ' . checked( $snippet['active'], true, false ) . '><span>' . esc_html__( 'Active', 'sm-snippets' ) . '</span></label>';
 		echo '<button type="submit" class="button button-primary button-large sm-save-button">' . esc_html__( 'Save Snippet', 'sm-snippets' ) . '</button>';
 		echo '<a class="button button-large sm-back-button" href="' . esc_url( admin_url( 'admin.php?page=sm-snippets' ) ) . '">' . esc_html__( 'Back', 'sm-snippets' ) . '</a>';
-		echo '<p>' . esc_html__( 'Local code. Clear placement. No cloud.', 'sm-snippets' ) . '</p>';
 		echo '</section>';
 	}
 
