@@ -30,11 +30,13 @@
 	gap: 4px 10px;
 }
 
-.sm-page-title .page-title-action {
-	flex-basis: 100%;
+.sm-title-actions {
+	display: flex;
+	margin-top: 14px;
+}
+
+.sm-title-actions .page-title-action {
 	margin-left: 0;
-	margin-top: 10px;
-	width: fit-content;
 }
 
 .sm-byline {

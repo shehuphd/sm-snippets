@@ -127,6 +127,8 @@ final class Admin {
 		echo '<div class="sm-page-title">';
 		echo '<h1 class="wp-heading-inline">' . esc_html__( 'SM Snippets', 'sm-snippets' ) . '</h1>';
 		echo '<span class="sm-byline">' . esc_html__( 'By', 'sm-snippets' ) . ' <a href="' . esc_url( 'https://mohammedshehu.com' ) . '" target="_blank" rel="noopener noreferrer">Mo</a></span>';
+		echo '</div>';
+		echo '<div class="sm-title-actions">';
 		echo '<a class="page-title-action" href="' . esc_url( admin_url( 'admin.php?page=sm-snippets&view=edit' ) ) . '">' . esc_html__( 'Add New', 'sm-snippets' ) . '</a>';
 		echo '</div>';
 		$this->render_notices();
