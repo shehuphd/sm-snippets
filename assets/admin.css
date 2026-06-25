@@ -183,6 +183,39 @@
 	tab-size: 2;
 }
 
+
+.sm-export-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 0;
+}
+
+.sm-primary-box .CodeMirror {
+	background: #fbfcff;
+	border: 1px solid #cfd5df;
+	border-radius: 7px;
+	box-shadow: 0 1px 1px rgba(18, 24, 40, 0.025);
+	font-size: 13px;
+	line-height: 1.55;
+	min-height: min(58vh, 640px);
+}
+
+.sm-primary-box .CodeMirror-focused {
+	border-color: var(--sm-blue);
+	box-shadow: 0 0 0 2px rgba(56, 88, 233, 0.14);
+}
+
+.sm-primary-box .CodeMirror-gutters {
+	background: #f3f5f9;
+	border-color: #dfe3ea;
+	border-radius: 7px 0 0 7px;
+}
+
+.sm-primary-box .CodeMirror-scroll {
+	min-height: min(58vh, 640px);
+}
+
 .sm-publish-box {
 	background: linear-gradient(180deg, #ffffff 0%, #f8f9ff 100%);
 }

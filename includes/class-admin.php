@@ -50,15 +50,68 @@ final class Admin {
 			'dashicons-editor-code',
 			58
 		);
+
+		add_submenu_page(
+			'sm-snippets',
+			__( 'All Snippets', 'sm-snippets' ),
+			__( 'All Snippets', 'sm-snippets' ),
+			'manage_options',
+			'sm-snippets',
+			array( $this, 'render_page' )
+		);
+
+		add_submenu_page(
+			'sm-snippets',
+			__( 'Add New Snippet', 'sm-snippets' ),
+			__( 'Add New', 'sm-snippets' ),
+			'manage_options',
+			'sm-snippets-add',
+			array( $this, 'render_page' )
+		);
+
+		add_submenu_page(
+			'sm-snippets',
+			__( 'Import / Export', 'sm-snippets' ),
+			__( 'Import / Export', 'sm-snippets' ),
+			'manage_options',
+			'sm-snippets-import-export',
+			array( $this, 'render_page' )
+		);
 	}
 
 	public function enqueue_assets( string $hook ): void {
-		if ( 'toplevel_page_sm-snippets' !== $hook ) {
+		$allowed_hooks = array(
+			'toplevel_page_sm-snippets',
+			'sm-snippets_page_sm-snippets-add',
+			'sm-snippets_page_sm-snippets-import-export',
+		);
+
+		if ( ! in_array( $hook, $allowed_hooks, true ) ) {
 			return;
 		}
 
 		wp_enqueue_style( 'sm-snippets-admin', SM_SNIPPETS_URL . 'assets/admin.css', array(), SM_SNIPPETS_VERSION );
-		wp_enqueue_script( 'sm-snippets-admin', SM_SNIPPETS_URL . 'assets/admin.js', array(), SM_SNIPPETS_VERSION, true );
+
+		$settings = wp_enqueue_code_editor( array( 'type' => 'text/html' ) );
+		wp_enqueue_code_editor( array( 'type' => 'text/css' ) );
+		wp_enqueue_code_editor( array( 'type' => 'application/javascript' ) );
+		wp_enqueue_code_editor( array( 'type' => 'application/x-httpd-php' ) );
+		wp_enqueue_script( 'code-editor' );
+		wp_enqueue_style( 'code-editor' );
+		wp_enqueue_script( 'sm-snippets-admin', SM_SNIPPETS_URL . 'assets/admin.js', array( 'jquery', 'code-editor' ), SM_SNIPPETS_VERSION, true );
+		wp_localize_script(
+			'sm-snippets-admin',
+			'smSnippetsEditor',
+			array(
+				'settings' => $settings,
+				'modes'    => array(
+					'html' => 'htmlmixed',
+					'css'  => 'css',
+					'js'   => 'javascript',
+					'php'  => 'application/x-httpd-php',
+				),
+			)
+		);
 	}
 
 	public function safe_mode_notice(): void {
@@ -114,6 +167,11 @@ final class Admin {
 			$this->handle_export();
 		}
 
+		if ( 'export_zip' === $action ) {
+			check_admin_referer( 'sm_snippets_export_zip' );
+			$this->handle_export_zip();
+		}
+
 		if ( 'import' === $action && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
 			check_admin_referer( 'sm_snippets_import' );
 			$this->handle_import();
@@ -121,7 +179,7 @@ final class Admin {
 	}
 
 	public function render_page(): void {
-		$view = sanitize_key( $_GET['view'] ?? 'list' );
+		$view = $this->get_current_view();
 
 		echo '<div class="wrap sm-snippets-wrap">';
 		echo '<div class="sm-page-title">';
@@ -129,7 +187,7 @@ final class Admin {
 		echo '<span class="sm-byline">' . esc_html__( 'By', 'sm-snippets' ) . ' <a href="' . esc_url( 'https://mohammedshehu.com' ) . '" target="_blank" rel="noopener noreferrer">Mo</a></span>';
 		echo '</div>';
 		echo '<div class="sm-title-actions">';
-		echo '<a class="page-title-action" href="' . esc_url( admin_url( 'admin.php?page=sm-snippets&view=edit' ) ) . '">' . esc_html__( 'Add New', 'sm-snippets' ) . '</a>';
+		echo '<a class="page-title-action" href="' . esc_url( admin_url( 'admin.php?page=sm-snippets-add' ) ) . '">' . esc_html__( 'Add New', 'sm-snippets' ) . '</a>';
 		echo '</div>';
 		$this->render_notices();
 
@@ -142,6 +200,20 @@ final class Admin {
 		}
 
 		echo '</div>';
+	}
+
+	private function get_current_view(): string {
+		$page = sanitize_key( $_GET['page'] ?? 'sm-snippets' );
+
+		if ( 'sm-snippets-add' === $page ) {
+			return 'edit';
+		}
+
+		if ( 'sm-snippets-import-export' === $page ) {
+			return 'import-export';
+		}
+
+		return sanitize_key( $_GET['view'] ?? 'list' );
 	}
 
 	private function render_notices(): void {
@@ -166,7 +238,7 @@ final class Admin {
 			: wp_nonce_url( admin_url( 'admin.php?page=sm-snippets&action=enable_safe_mode' ), 'sm_snippets_enable_safe_mode' );
 
 		echo '<p class="sm-snippets-actions">';
-		echo '<a class="button" href="' . esc_url( admin_url( 'admin.php?page=sm-snippets&view=import-export' ) ) . '">' . esc_html__( 'Import / Export', 'sm-snippets' ) . '</a> ';
+		echo '<a class="button" href="' . esc_url( admin_url( 'admin.php?page=sm-snippets-import-export' ) ) . '">' . esc_html__( 'Import / Export', 'sm-snippets' ) . '</a> ';
 		echo '<a class="button button-secondary" href="' . esc_url( $safe_mode_url ) . '">' . esc_html( '1' === get_option( 'sm_snippets_safe_mode', '0' ) ? __( 'Disable Safe Mode', 'sm-snippets' ) : __( 'Pause All Snippets', 'sm-snippets' ) ) . '</a>';
 		echo '</p>';
 
@@ -349,8 +421,11 @@ final class Admin {
 	private function render_import_export(): void {
 		echo '<div class="sm-layout"><main>';
 		echo '<section class="sm-box"><h2>' . esc_html__( 'Export', 'sm-snippets' ) . '</h2>';
-		echo '<p>' . esc_html__( 'Download all snippets as JSON.', 'sm-snippets' ) . '</p>';
-		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( admin_url( 'admin.php?page=sm-snippets&action=export' ), 'sm_snippets_export' ) ) . '">' . esc_html__( 'Export JSON', 'sm-snippets' ) . '</a>';
+		echo '<p>' . esc_html__( 'Download all snippets as JSON, or export a ZIP with the manifest and individual snippet files.', 'sm-snippets' ) . '</p>';
+		echo '<p class="sm-export-actions">';
+		echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( admin_url( 'admin.php?page=sm-snippets&action=export' ), 'sm_snippets_export' ) ) . '">' . esc_html__( 'Export JSON', 'sm-snippets' ) . '</a> ';
+		echo '<a class="button" href="' . esc_url( wp_nonce_url( admin_url( 'admin.php?page=sm-snippets&action=export_zip' ), 'sm_snippets_export_zip' ) ) . '">' . esc_html__( 'Export ZIP', 'sm-snippets' ) . '</a>';
+		echo '</p>';
 		echo '</section></main><aside>';
 		echo '<section class="sm-box"><h2>' . esc_html__( 'Import', 'sm-snippets' ) . '</h2>';
 		echo '<form method="post" enctype="multipart/form-data" action="' . esc_url( admin_url( 'admin.php?page=sm-snippets&action=import' ) ) . '">';
@@ -377,6 +452,71 @@ final class Admin {
 		header( 'Content-Disposition: attachment; filename=' . $filename );
 		echo wp_json_encode( $this->repository->export_all(), JSON_PRETTY_PRINT );
 		exit;
+	}
+
+	private function handle_export_zip(): void {
+		if ( ! class_exists( 'ZipArchive' ) ) {
+			wp_die( esc_html__( 'ZIP export requires the PHP ZipArchive extension.', 'sm-snippets' ) );
+		}
+
+		$filename = 'sm-snippets-' . gmdate( 'Y-m-d-His' ) . '.zip';
+		$temp_file = wp_tempnam( $filename );
+
+		if ( ! $temp_file ) {
+			wp_die( esc_html__( 'Could not create a temporary export file.', 'sm-snippets' ) );
+		}
+
+		$export = $this->repository->export_all();
+		$zip = new \ZipArchive();
+
+		if ( true !== $zip->open( $temp_file, \ZipArchive::OVERWRITE ) ) {
+			wp_delete_file( $temp_file );
+			wp_die( esc_html__( 'Could not create the ZIP export.', 'sm-snippets' ) );
+		}
+
+		$zip->addFromString( 'sm-snippets.json', wp_json_encode( $export, JSON_PRETTY_PRINT ) );
+
+		foreach ( $export['snippets'] as $snippet ) {
+			$zip->addFromString( $this->get_snippet_export_filename( $snippet ), (string) $snippet['code'] );
+		}
+
+		$zip->close();
+
+		nocache_headers();
+		header( 'Content-Type: application/zip' );
+		header( 'Content-Disposition: attachment; filename=' . $filename );
+		header( 'Content-Length: ' . filesize( $temp_file ) );
+		readfile( $temp_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
+		wp_delete_file( $temp_file );
+		exit;
+	}
+
+	private function get_snippet_export_filename( array $snippet ): string {
+		$name = sanitize_title( (string) ( $snippet['name'] ?? '' ) );
+		$id = absint( $snippet['id'] ?? 0 );
+		$type = sanitize_key( (string) ( $snippet['type'] ?? 'html' ) );
+
+		if ( '' === $name ) {
+			$name = 'snippet-' . $id;
+		}
+
+		return sprintf(
+			'snippets/%d-%s.%s',
+			$id,
+			$name,
+			$this->get_snippet_export_extension( $type )
+		);
+	}
+
+	private function get_snippet_export_extension( string $type ): string {
+		$extensions = array(
+			'css'  => 'css',
+			'js'   => 'js',
+			'php'  => 'php',
+			'html' => 'html',
+		);
+
+		return $extensions[ $type ] ?? 'txt';
 	}
 
 	private function handle_import(): void {

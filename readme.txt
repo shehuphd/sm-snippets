@@ -3,7 +3,7 @@ Contributors: Mo Shehu
 Tags: snippets, header, footer, scripts, wordpress
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.1.2
+Stable tag: 0.1.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ Created by Mo Shehu: https://mohammedshehu.com
 * Priority ordering.
 * Page, path, post type, auth, environment, and admin-test-only targeting.
 * Safe mode to pause all snippets.
-* JSON import/export.
+* JSON import/export plus ZIP export.
 * Lightweight revision history.
 
 == Safe mode ==
