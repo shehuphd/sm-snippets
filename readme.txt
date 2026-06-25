@@ -1,5 +1,5 @@
 === SM Snippets ===
-Contributors: sm
+Contributors: Mo Shehu
 Tags: snippets, header, footer, scripts, wordpress
 Requires at least: 6.0
 Requires PHP: 7.4
@@ -13,7 +13,7 @@ Local, boring, reliable snippet control for WordPress.
 
 SM Snippets is a small local snippet manager for WordPress. It lets a trusted admin paste HTML, CSS, JavaScript, or PHP and choose where it runs.
 
-No cloud connection. No snippet marketplace. No remote sync. No Pro gating.
+Created by Mo Shehu: https://mohammedshehu.com
 
 == Current features ==
 
